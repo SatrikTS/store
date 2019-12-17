@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,9 +8,9 @@
 </head>
 <body>
     <div class="store">
-        <header>
-            <div class="container mb-4">
-                <div class="row justify-content-between">
+        <header class="">
+            <div class="container">
+                <div class="row justify-content-between align-items-center">
                     <ul class="nav">
                         <li class="nav-item">
                             <a class="nav-link active" href="index.html">client</a>
@@ -20,10 +20,9 @@
                         </li>
                     </ul>
 
-                    <div class="basket">
-                        <img src="/img/icon-cart.png" alt="basket">
-                        <span class="js-basket-count basket__count">0</span>
-                        <span class="js-basket-remove basket__remove">Remove all</span>
+                    <div class="basket-cart js-basket-cart">
+                        <img src="img/icon-cart.png" alt="basket">
+                        <span class="js-basket-cart-count basket-cart__qty"></span>
                     </div>
 
                 </div>
@@ -36,36 +35,117 @@
                         <!-- Product items-->
                     </div>
                 </div>
+                <div class="preloader js-preloader">
+                </div>
         </div>
-
+        <div class="basket js-basket bg-info" data-url="http://5df0fe899df6fb00142bd6d8.mockapi.io/Cart">
+            <div class="basket__btn-group">
+                <button type="button" name="button" class="btn btn-danger js-basket-close">Close</button>
+            </div>
+            <h3>Cart</h3>
+            <div class="cart__wrap js-basket-wrap">
+                <!-- cart item -->
+            </div>
+            <button type="button" name="button" class="btn btn-success js-basket-order is-hidden">Order</button>
+        </div>
     </div>
 
+
+<div class="popup js-popup js-basket-popup is-hidden">
+    <div class="popup__wrap">
+        <form action="http://5df0fe899df6fb00142bd6d8.mockapi.io/Orders" class="form form--vertical js-order-form">
+            <div class="form-group">
+                <label for="username">Name</label>
+                <input required type="text" name="username" placeholder="name" class="js-input-name">
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone</label>
+                <input required type="tel" name="phone" placeholder="+3(___) ___-__-__  ua"  class="js-input-phone">
+                <span class="error-message">incorrect number</span>
+            </div>
+            <div class="form-group">
+                <label for="address">Address</label>
+                <input required type="text" name="address" placeholder="Address"  class="js-input-address">
+            </div>
+            <div class="form-group">
+                 <label>Order notice</label>
+                <textarea class="js-description js-input-edit" name="description" rows="1" cols="47" placeholder="Order notice"></textarea>
+            </div>
+            <button type="submit" name="button" class="btn btn-success">Submit</button>
+        </form>
+    </div>
+</div>
 <script id="product-hbtpl" type="text/x-handlebars-template">
     {{#each this}}
-        <div class="product js-product" data-id="{{id}}">
+        <div class="product js-product" data-id="{{id}}" data-title="{{title}}"
+        data-price="{{price}}"
+        >
             <div class="row">
                 <div class="col-md-3">
-                    <div class="product__img">
-                        <img src="{{img}}" alt="{{title}}">
+                    <div class="product__img js-product-img">
+                        <!-- <img src="{{img}}" alt="{{title}}"> -->
                     </div>
                 </div>
                 <div class="col-md-9">
                     <div class="product__info">
                         <div class="product__data">
-                            <h4 class="product__title">{{title}}</h4>
-                            <div class="product__text">{{desc}}</div>
+                            <h4 class="product__title" >{{title}}</h4>
+                            <div class="product__text">{{description}}</div>
                             <span class="product__price">
                                 <span class="product__mark">price:</span>
                                 {{price}}$
                             </span>
+                            {{#if available}}
+                                <span class="product__label product__label--on">Available</span>
+                                {{else}}
+                                <span class="product__label product__label--off">Not available</span>
+                            {{/if}}
                         </div>
-                        <button class="product__basket js-add-to-basket btn btn-success">В корзину</button>
+                        <button class="product__basket js-add-to-basket btn btn-success"
+                        {{#unless available}} disabled {{/unless}}
+                        >Add Cart</button>
                     </div>
                 </div>
             </div>
         </div>
     {{/each}}
 </script>
+
+<script id="basket-product-tmpl" type="text/x-handlebars-template">
+    {{#each this}}
+    <div class="basket-item js-basket-item" data-id="{{ident}}"
+    data-title="{{title}}" data-price="{{price}}" data-count=""
+    >
+        <span class="basket-item__title">
+            <span class="basket-item__label">Title:</span>
+            {{title}}
+        </span>
+        <span class="basket-item__id">
+            <span class="basket-item__label">id:</span>
+            {{ident}}
+        </span>
+        <span class="basket-item__count">
+            <span class="basket-item__label">price: </span>
+            {{price}} $
+        </span>
+        <span class="basket-item__quant">
+            <span class="basket-item__label">count: </span>
+            <div class="baket-item__count-group">
+                <button type="button" name="button" class="btn btn-dark js-basket-item-minus">-</button>
+                <span class="js-basket-item-count">{{quant}}</span>
+                <button type="button" name="button" class="btn btn-dark js-basket-item-plus">+</button>
+            </div>
+        </span>
+        <button  type="button" name="button" class="btn btn-danger js-basket-item-remove">Remove</button>
+    </div>
+    {{/each}}
+</script>
+<script id="product-msg-hbtpl" type="text/x-handlebars-template">
+    <div class="alert alert-success js-alert-msg">
+        {{alert}}
+    </div>
+</script>
+
 <script src="main.js"></script>
 </body>
 </html>
