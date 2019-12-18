@@ -1,7 +1,7 @@
 import Handlebars from 'handlebars/dist/handlebars';
 import ShowMessages from '../show-msg/show-msg';
 import Methods from '../methods/methods';
-import GetProducts from '../get-products/get-products';
+import GetItem from '../get-item/get-item';
 // Взаимодействие с корзиной
 export default class Basket {
     constructor() {
@@ -37,7 +37,7 @@ export default class Basket {
         };
 
         this.ShowMessages = new ShowMessages();
-        // this.GetProducts = new GetProducts();
+        // this.GetItem = new GetItem();
 
         this.init();
         this.setListeners();
@@ -90,14 +90,14 @@ export default class Basket {
         // Показываем прелоадер
         Methods.showPreloader(this.classes.show);
         // Показываем товары на странице
-        GetProducts.getProducts(this.urlProducts, this.templates.product, this.productList);
+        GetItem.getRequest(this.urlProducts, this.templates.product, this.productList);
     }
 
     /*
     * Показываем товары в корзине, если они были добавлены ранее/ Данные берутся из localstorage
     */
     renderBsketProducts() {
-        GetProducts.getResponse(this.getCartData(),
+        GetItem.getResponse(this.getCartData(),
             this.templates.basket, this.cartWrap, true);
             this.basketItem = document.querySelectorAll('.js-basket-item');
     }
@@ -206,7 +206,7 @@ export default class Basket {
     */
     addBasketProduct(item) {
         this.pushCartArray(item);
-        GetProducts.getResponse(
+        GetItem.getResponse(
             this.basketState, this.templates.basket, this.cartWrap, true);
         this.basketOrderBtn.classList.remove(this.classes.hidden);
         this.basketCart.classList.add(this.classes.active);
@@ -231,9 +231,9 @@ export default class Basket {
     * Собираем данные о товарах, которые пойдут в корзину
     */
     pushCartArray (item) {
-        var ident = item.getAttribute('data-id');
-        var productName = item.getAttribute('data-title');
-        var productPrice = item.getAttribute('data-price');
+        const ident = item.getAttribute('data-id');
+        const productName = item.getAttribute('data-title');
+        const productPrice = item.getAttribute('data-price');
 
         let obj = this.basketState.find(item => item.ident === ident);
         if (obj) {
@@ -253,9 +253,9 @@ export default class Basket {
     */
     getParams(e) {
         let params = {};
-        for (var i=0; i<e.target.elements.length; i++) {
-            var elem = e.target.elements[i];
-            var value = elem.value;
+        for (let i=0; i<e.target.elements.length; i++) {
+            let elem = e.target.elements[i];
+            let value = elem.value;
             params[elem.name] = value;
         }
         this.params = params;

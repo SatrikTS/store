@@ -1,7 +1,7 @@
 import Handlebars from 'handlebars/dist/handlebars';
 // Получаем данные с сервера методом GET,
 // где надо только вытянуть инфу о продуктах
-export default class GetProducts {
+export default class GetItem {
     /**
     * компиляция handlebars-template
     */
@@ -15,18 +15,17 @@ export default class GetProducts {
     * Рендерим ответ
     */
     static getResponse(data, template, container, cart) {
-        if(cart) {
-            container.innerHTML = GetProducts.prepareTpl(template, data);
-            // container.insertAdjacentHTML('afterBegin', GetProducts.prepareTpl(template, data));
+        if (cart) {
+            container.innerHTML = GetItem.prepareTpl(template, data);
         } else {
-            container.insertAdjacentHTML('afterBegin', GetProducts.prepareTpl(template, data));
+            container.insertAdjacentHTML('afterBegin', GetItem.prepareTpl(template, data));
         }
     }
 
     /**
     * Запрашиваем список товаров
     */
-    static getProducts(url, template, container, cart) {
+    static getRequest(url, template, container, cart) {
 
         fetch(url, {
             method: 'GET'
@@ -35,7 +34,7 @@ export default class GetProducts {
             return response.json();
         })
         .then((data) => {
-            GetProducts.getResponse(data, template, container, cart);
+            GetItem.getResponse(data, template, container, cart);
         })
         .catch((error) => {
             console.log(error);

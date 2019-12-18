@@ -46,6 +46,12 @@
                 opacity: 0;
             }
         }
+
+        &--vertical {
+            .image-mask {
+                top: 6px;
+            }
+        }
     }
 
     .form-check {

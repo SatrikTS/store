@@ -1,4 +1,4 @@
-import GetProducts from '../get-products/get-products'
+import GetItem from '../get-item/get-item'
 // Подгружаем данные о заказе в админку
 class AdminOrders {
     constructor(item) {
@@ -15,7 +15,7 @@ class AdminOrders {
     }
 
     init() {
-        GetProducts.getProducts(this.url, this.templates.order, this.orderList);
+        GetItem.getRequest(this.url, this.templates.order, this.orderList);
     }
 }
 

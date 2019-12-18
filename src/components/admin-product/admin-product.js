@@ -1,5 +1,5 @@
 import Handlebars from 'handlebars/dist/handlebars';
-import GetProducts from '../get-products/get-products';
+import GetItem from '../get-item/get-item';
 import ShowMessages from '../show-msg/show-msg';
 import Methods from '../methods/methods';
 
@@ -97,7 +97,7 @@ export default class AdminProduct {
     * Запрашиваем список товаров
     */
     getProdutList() {
-        GetProducts.getProducts(this.url, this.templates.product, this.productList, true);
+        GetItem.getRequest(this.url, this.templates.product, this.productList, true);
         setTimeout(() => {
             this.renderNewProductList();
         }, 1000)
@@ -107,9 +107,10 @@ export default class AdminProduct {
     * Очищаем элементы формы
     */
     clearForm(e) {
-        for (var i=0; i<e.target.elements.length; i++) {
+        for (let i=0; i<e.target.elements.length; i++) {
             e.target.elements[i].value = '';
         }
+        this.inputImg.previousElementSibling.innerHTML = 'Upload photo';
     }
 
     /**
@@ -126,11 +127,11 @@ export default class AdminProduct {
     renderNewProductList() {
         const products = document.querySelectorAll('.js-product-item');
         products.forEach((item, i) => {
-            var productImg = item.querySelector('.js-table-img')
-            var img = document.createElement('img');
-            var localImg = JSON.parse(localStorage.getItem('img'));
-            if(localImg && localImg[i]) {
-                img.src = localImg[i].image
+            const productImg = item.querySelector('.js-table-img')
+            const img = document.createElement('img');
+            const localImg = JSON.parse(localStorage.getItem('img'));
+            if (localImg && localImg[i]) {
+                img.src = localImg[i].image;
                 img.width = 200;
                 img.height = 200;
                 productImg.append(img);
@@ -145,14 +146,14 @@ export default class AdminProduct {
     // Апендим полученый массив с объектами в таблицу
     prodtListSort(itemProductArr, item) {
         itemProductArr.forEach((item) => {
-            this.productList.append(item)
+            this.productList.append(item);
         })
     }
 
     // Апендим полученый массив с объектами в таблицу РЕВЕРСНО!
     prodtListSortReverse(itemProductArr, item) {
         itemProductArr.reverse().forEach((item) => {
-            this.productList.append(item)
+            this.productList.append(item);
         })
     }
 
@@ -161,7 +162,7 @@ export default class AdminProduct {
     */
     toggleClass(sortItem, e) {
         sortItem.forEach((itemProd) => {
-            if(e.target === itemProd && !e.target.classList.contains('is-active') ) {
+            if (e.target === itemProd && !e.target.classList.contains('is-active') ) {
                 e.target.classList.add('is-active');
             } else {
                 itemProd.classList.remove('is-active');
@@ -175,20 +176,20 @@ export default class AdminProduct {
     */
     sortProductTable(products) {
         this.sortItem.forEach((item, index) => {
-            var itemProductArr = [];
+            let itemProductArr = [];
             products.forEach((itemProduct, i) => {
                 itemProductArr.push(itemProduct)
-            })
+            });
             this.flagSort === false;
             item.addEventListener('click', (e) => {
             this.toggleClass(this.sortItem, e);
 
 
-                if(item.getAttribute('data-sort') === 'code') {
+                if (item.getAttribute('data-sort') === 'code') {
                     this.prodtListSortReverse(itemProductArr, item);
                 }
 
-                if(item.getAttribute('data-sort') === 'name' || item.getAttribute('data-sort') === 'av') {
+                if (item.getAttribute('data-sort') === 'name' || item.getAttribute('data-sort') === 'av') {
                     itemProductArr.sort((a, b) => {
                         let nameA = a.getAttribute('data-title').toUpperCase();
                         let nameB = b.getAttribute('data-title').toUpperCase();
@@ -199,7 +200,7 @@ export default class AdminProduct {
                    this.toggleSort(itemProductArr, item);
                 }
 
-                if(item.getAttribute('data-sort') === 'price') {
+                if (item.getAttribute('data-sort') === 'price') {
                     itemProductArr.sort((a, b) => {
                         let aPrice = a.getAttribute('data-price');
                         let bPrice = b.getAttribute('data-price');
@@ -230,14 +231,14 @@ export default class AdminProduct {
     * Получаем картинку с загрузки и записываем ее в localstorage
     */
     handleFileSelect(e, itemInput) {
-        var file = e.target.files;
-        var f = file[0];
+        const file = e.target.files;
+        const f = file[0];
 
         if (!f.type.match('image.*')) {
             alert("Image only please....");
         }
 
-        var reader = new FileReader();
+        const reader = new FileReader();
         reader.onload = ((theFile) => {
             return (e) => {
                 this.imgObj = {
@@ -254,9 +255,9 @@ export default class AdminProduct {
     */
     getParams(e) {
         let params = {};
-        for (var i=0; i<e.target.elements.length; i++) {
-            var elem = e.target.elements[i];
-            var value = elem.value;
+        for (let i=0; i<e.target.elements.length; i++) {
+            let elem = e.target.elements[i];
+            let value = elem.value;
             if (elem.name === 'price') value = +elem.value;
             if (elem.name === 'available') value = elem.checked;
             params[elem.name] = value;
@@ -269,14 +270,14 @@ export default class AdminProduct {
     */
     removeList(products) {
         products.forEach((item, index) => {
-            const productRemoveBtn = item.querySelector('.js-product-remove')
+            const productRemoveBtn = item.querySelector('.js-product-remove');
             productRemoveBtn.addEventListener('click', (e) => {
                 if(e.target === productRemoveBtn) {
                     const productId = item.getAttribute('data-id');
-                    this.deleteProduct(productId);
-                    item.remove();
                     this.imgArrState.splice(index, 1);
                     this.getDataToLocalStr();
+                    this.deleteProduct(productId);
+                    item.remove();
                 }
             })
         })
@@ -296,8 +297,8 @@ export default class AdminProduct {
 
                 productEditRole.forEach((itemEdit) => {
                     AdminProduct.setInputValue(itemEdit)
-                })
-                this.formEdit.setAttribute('data-id', i)
+                });
+                this.formEdit.setAttribute('data-id', i);
                 this.popupEdit.classList.remove(this.classes.hidden);
             });
 

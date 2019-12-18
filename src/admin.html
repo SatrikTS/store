@@ -99,10 +99,11 @@
                     <input required type="text" name="price" placeholder="price"  class="js-input-price js-input-edit">
                     <span class="error-message">Price must be a number</span>
                 </div>
-                <div class="form-group">
-                    <label for="img">Image</label>
-                    <span class="title">Upload photo</span>
-                    <input type="file" name="image" placeholder="image" src  class="js-input-image-edit">
+                <div class="form-group form-group--image form-group--vertical">
+                    <label for="image">
+                        <span class="image-mask">Upload photo</span>
+                        <input type="file" id="image" name="image" placeholder="image" src  class="js-input-image-edit">
+                    </label>
                 </div>
                 <div class="form-group">
                      <label>Description</label>
