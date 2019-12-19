@@ -13,6 +13,10 @@ export default class AdminProduct {
         this.inputImg = this.el.querySelector('.js-input-image');
         this.inputImgEdit = document.querySelector('.js-input-image-edit');
 
+        this.isSortReverse = false;
+        this.sortColumnName = '';
+        this.itemProductArr = [];
+
 
         this.sortItem = document.querySelectorAll('.js-sort-item');
 
@@ -81,6 +85,13 @@ export default class AdminProduct {
             this.handleFileSelect(e, this.inputImgEdit);
         })
 
+        this.sortItem.forEach((item) => {
+            item.addEventListener('click', (e) => {
+                this.toggleClass(item, e);
+                this.sortProducts(item);
+            })
+        })
+
     }
 
     /**
@@ -140,92 +151,70 @@ export default class AdminProduct {
         })
         this.removeList(products);
         this.editList(products);
-        this.sortProductTable(products);
+        console.log(products);
+        this.itemProductArr = Array.from(products);
     }
 
-    // Апендим полученый массив с объектами в таблицу
-    prodtListSort(itemProductArr, item) {
-        itemProductArr.forEach((item) => {
-            this.productList.append(item);
-        })
-    }
-
-    // Апендим полученый массив с объектами в таблицу РЕВЕРСНО!
-    prodtListSortReverse(itemProductArr, item) {
-        itemProductArr.reverse().forEach((item) => {
-            this.productList.append(item);
-        })
-    }
 
     /**
     * Переключаем класс для сортировки
     */
-    toggleClass(sortItem, e) {
-        sortItem.forEach((itemProd) => {
-            if (e.target === itemProd && !e.target.classList.contains('is-active') ) {
-                e.target.classList.add('is-active');
-            } else {
-                itemProd.classList.remove('is-active');
-            }
-        })
-    }
-
-
-    /**
-    * Сортировка по таблице
-    */
-    sortProductTable(products) {
-        this.sortItem.forEach((item, index) => {
-            let itemProductArr = [];
-            products.forEach((itemProduct, i) => {
-                itemProductArr.push(itemProduct)
-            });
-            this.flagSort === false;
-            item.addEventListener('click', (e) => {
-            this.toggleClass(this.sortItem, e);
-
-
-                if (item.getAttribute('data-sort') === 'code') {
-                    this.prodtListSortReverse(itemProductArr, item);
-                }
-
-                if (item.getAttribute('data-sort') === 'name' || item.getAttribute('data-sort') === 'av') {
-                    itemProductArr.sort((a, b) => {
-                        let nameA = a.getAttribute('data-title').toUpperCase();
-                        let nameB = b.getAttribute('data-title').toUpperCase();
-                        if (nameA < nameB) return -1;
-                        if (nameA > nameB) return 1;
-                        return 0;
-                    })
-                   this.toggleSort(itemProductArr, item);
-                }
-
-                if (item.getAttribute('data-sort') === 'price') {
-                    itemProductArr.sort((a, b) => {
-                        let aPrice = a.getAttribute('data-price');
-                        let bPrice = b.getAttribute('data-price');
-                        if(isNaN(aPrice)) return 1;
-                        if(isNaN(bPrice)) return -1;
-                        return +aPrice - +bPrice;
-                    })
-                    this.toggleSort(itemProductArr, item);
-                }
-            })
-        })
-    }
-
-    /**
-    * Переворчаиваем сортирвоку
-    */
-    toggleSort(itemProductArr, item) {
-        if(this.flagSort === false) {
-            this.prodtListSort(itemProductArr, item);
-            this.flagSort = true;
+    toggleClass(item, e) {
+        if (e.target === item && !e.target.classList.contains(this.classes.active) ) {
+            e.target.classList.add(this.classes.active);
         } else {
-            this.prodtListSortReverse(itemProductArr, item);
-            this.flagSort = false;
+            item.classList.remove(this.classes.active);
         }
     }
+
+    /**
+    * Сортировка
+    */
+    sortProducts(item) {
+        this.productList.querySelectorAll('.js-product-item').forEach((itemEl) => {
+            itemEl.parentNode.removeChild(itemEl)
+        })
+
+        if (this.sortColumnName === item.getAttribute('data-sort')) {
+            this.isSortReverse = !this.isSortReverse;
+        } else {
+            this.isSortReverse = false;
+        };
+
+        if (item.getAttribute('data-sort') === 'code') {
+            this.itemProductArr.sort((a, b) => {
+                return +a.getAttribute('data-id') - +b.getAttribute('data-id');
+            })
+        }
+
+        if (item.getAttribute('data-sort') === 'name' || item.getAttribute('data-sort') === 'av') {
+            this.itemProductArr.sort((a, b) => {
+                let nameA = a.getAttribute('data-title').toUpperCase();
+                let nameB = b.getAttribute('data-title').toUpperCase();
+                if (nameA < nameB) return -1;
+                if (nameA > nameB) return 1;
+                return 0;
+            })
+         }
+
+         if (item.getAttribute('data-sort') === 'price') {
+            this.itemProductArr.sort((a, b) => {
+                let aPrice = a.getAttribute('data-price');
+                let bPrice = b.getAttribute('data-price');
+                if(isNaN(aPrice)) return 1;
+                if(isNaN(bPrice)) return -1;
+                return +aPrice - +bPrice;
+            })
+         }
+
+         if (this.isSortReverse) this.itemProductArr.reverse();
+         this.sortColumnName = item.getAttribute('data-sort');
+
+         this.itemProductArr.forEach((item) => {
+             this.productList.appendChild(item);
+         });
+    }
+
 
     /**
     * Получаем картинку с загрузки и записываем ее в localstorage
@@ -277,6 +266,7 @@ export default class AdminProduct {
                     this.imgArrState.splice(index, 1);
                     this.getDataToLocalStr();
                     this.deleteProduct(productId);
+                    this.itemProductArr.splice(index, 1)
                     item.remove();
                 }
             })
